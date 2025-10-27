@@ -19,24 +19,13 @@ class ApproveOrderHander(Handler):
         telegram_id = update["callback_query"]["from"]["id"]
         callback_data = update["callback_query"]["data"]
 
-        drink_mapping = {
-            "drink_coca_cola": "Coca-Cola",
-            "drink_sprite": "Sprite",
-            "drink_orange_juice": "Orange Juice",
-            "drink_apple_juice": "Apple Juice",
-            "drink_none": "No drink"
-        }
-
-        pizza_drink = drink_mapping.get(callback_data)
-        order_json["pizza_drink"] = pizza_drink
-
-        bot.database_client.update_user_order_json(telegram_id, order_json)
         bot.database_client.update_user_state(telegram_id, "ORDER_FINISHED")
         bot.telegram_client.answerCallbackQuery(update["callback_query"]["id"])
         bot.telegram_client.deleteMessage(
             chat_id=update["callback_query"]["message"]["chat"]["id"],
             message_id=update["callback_query"]["message"]["message_id"],
         )
+        
         if callback_data == "order_approve":
             pizza_name = order_json.get("pizza_name", "Unknown")
             pizza_size = order_json.get("pizza_size", "Unknown")
